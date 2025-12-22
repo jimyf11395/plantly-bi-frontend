@@ -4,15 +4,20 @@ import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const getToken = () => Cookies.get("token");
 
   const isValidToken = (token) => {
+    if (!token) return false;
     try {
       const decoded = jwtDecode(token);
-      if (decoded.exp * 1000 < Date.now()) return false;
+      if (decoded.exp * 1000 < Date.now()) {
+        return false;
+      }
       setUser({
         user_id: decoded.user_id,
         email: decoded.email,
@@ -21,49 +26,56 @@ export const AuthProvider = ({ children }) => {
       });
       return true;
     } catch (err) {
+      console.error("Token validation error:", err);
       return false;
     }
   };
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) return logout();
-
-    const fetchUser = async () => {
+    const initAuth = () => {
       const token = getToken();
-      if (!token) return logout();
 
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_BASE_URL}/api/auth/me`,
-          {
-            headers: { Authorization: `Bearer ${token}` }, // send token in header
-          }
-        );
-        if (!res.ok) throw new Error("Not authenticated");
-        const data = await res.json();
-        setUser(data);
-      } catch (err) {
-        logout();
+      if (token) {
+        isValidToken(token);
       }
+
+      setLoading(false);
     };
 
-    fetchUser();
-  }, []);
+    initAuth();
+  }, []); // Only run once on mount
 
   const login = (token) => {
+    // Safari-compatible cookie settings
     Cookies.set("token", token, {
-      expires: 1,
-      secure: window.location.protocol === "https:", // only secure on https
-      sameSite: "Lax",
+      expires: 1, // 1 day
+      path: "/",
+      sameSite: "Strict",
+      secure: false, // false for localhost, true for production HTTPS
     });
-    isValidToken(token); // sets user
+
+    isValidToken(token);
   };
 
   const logout = () => {
-    Cookies.remove("token");
+    Cookies.remove("token", { path: "/" });
     setUser(null);
   };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider

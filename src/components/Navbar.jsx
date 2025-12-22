@@ -1,27 +1,12 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef(null);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <nav className="navbar">
-      <div className="container" ref={menuRef}>
+      <div className="container">
         {/* Burger button */}
         <button
           className="burger"
@@ -35,25 +20,38 @@ const Navbar = () => {
           Plantly BI
         </Link>
 
-        {/* Links */}
-        <div className={`nav-links ${isOpen ? "show" : ""}`}>
-          <Link
-            to="/dashboard"
-            className="nav-link"
+        {/* Slide-in panel */}
+        <div className={`nav-overlay ${isOpen ? "show" : ""}`}>
+          <button
+            className="close-panel"
             onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
           >
-            Dashboard
-          </Link>
-          <Link to="/kpi" className="nav-link" onClick={() => setIsOpen(false)}>
-            KPIs
-          </Link>
-          <Link
-            to="/users"
-            className="nav-link"
-            onClick={() => setIsOpen(false)}
-          >
-            Users
-          </Link>
+            ×
+          </button>
+          <div className="panel-links">
+            <Link
+              to="/dashboard"
+              className="panel-link"
+              onClick={() => setIsOpen(false)}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/kpi"
+              className="panel-link"
+              onClick={() => setIsOpen(false)}
+            >
+              KPIs
+            </Link>
+            <Link
+              to="/users"
+              className="panel-link"
+              onClick={() => setIsOpen(false)}
+            >
+              Users
+            </Link>
+          </div>
         </div>
       </div>
     </nav>

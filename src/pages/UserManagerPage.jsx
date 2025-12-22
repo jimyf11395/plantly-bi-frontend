@@ -8,6 +8,8 @@ const UserManager = () => {
   const [newUser, setNewUser] = useState({
     email: "",
     password: "",
+    username: "",
+    role: "",
   });
   const [editingUser, setEditingUser] = useState(null);
   const [error, setError] = useState("");
@@ -16,13 +18,18 @@ const UserManager = () => {
   // ===== Open modals =====
   const openModal = () => {
     setEditingUser(null);
-    setNewUser({ email: "", password: "" });
+    setNewUser({ email: "", password: "", username: "", role: "" });
     setIsModalOpen(true);
   };
 
   const openEditModal = (user) => {
     setEditingUser(user);
-    setNewUser({ email: user.email, password: "" }); // don’t prefill password
+    setNewUser({
+      email: user.email,
+      password: "",
+      username: user.username || "",
+      role: user.role || "",
+    });
     setIsModalOpen(true);
   };
 
@@ -59,13 +66,24 @@ const UserManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = Cookies.get("token"); // ✅ read from cookie
+      const token = Cookies.get("token");
 
-      const url = editingUser
-        ? `${process.env.REACT_APP_API_BASE_URL}/api/auth/update`
-        : `${process.env.REACT_APP_API_BASE_URL}/api/auth/register`;
+      let url, method;
 
-      await axios.post(url, newUser, {
+      if (editingUser) {
+        // Editing existing user - use PUT with user_id
+        url = `${process.env.REACT_APP_API_BASE_URL}/api/auth/${editingUser.user_id}`;
+        method = "put";
+      } else {
+        // Creating new user - use POST to register
+        url = `${process.env.REACT_APP_API_BASE_URL}/api/auth/register`;
+        method = "post";
+      }
+
+      await axios({
+        method,
+        url,
+        data: newUser,
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
@@ -128,7 +146,6 @@ const UserManager = () => {
                     onClick={() => handleDelete(user.user_id)}
                     className="btn btn-small btn-delete"
                     style={{
-                      marginLeft: "8px",
                       backgroundColor: "#d9534f",
                       color: "white",
                     }}
