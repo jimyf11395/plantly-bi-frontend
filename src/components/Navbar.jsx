@@ -1,24 +1,52 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import logo from "./plantly.png";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav className="navbar">
       <div className="container">
-        {/* Burger button */}
-        <button
-          className="burger"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          ☰
-        </button>
-
         <Link to="/" className="nav-brand">
-          Plantly BI
+          <img src={logo} alt="Plantly BI" className="nav-logo" />
         </Link>
+
+        {/* Header links (visible on wider screens) */}
+        <div className="nav-links">
+          <Link to="/dashboard" className="nav-link">
+            Dashboard
+          </Link>
+
+          {/* Grouped header: Maintenance -> (KPIs, Users) */}
+          <div className="nav-group">
+            <button className="nav-group-label" aria-haspopup="true">
+              Maintenance ▾
+            </button>
+            <div className="nav-group-links" aria-label="Maintenance links">
+              <Link to="/kpi" className="nav-link">
+                KPIs
+              </Link>
+              <Link to="/users" className="nav-link">
+                Users
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Logout button on the right */}
+        <button
+          className="logout-btn"
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
+        >
+          Logout
+        </button>
 
         {/* Slide-in panel */}
         <div className={`nav-overlay ${isOpen ? "show" : ""}`}>

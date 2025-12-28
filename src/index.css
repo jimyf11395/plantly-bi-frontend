@@ -1,6 +1,6 @@
 :root {
   --primary-color: #4a90e2;
-  --secondary-color: #f5f6fa;
+  --secondary-color: #ffd600;
   --text-color: #2c3e50;
   --border-color: #e1e8ed;
   --success-color: #2ecc71;
@@ -53,6 +53,14 @@ body {
   font-weight: bold;
   color: var(--primary-color);
   text-decoration: none;
+  margin-right: 1.5rem;
+}
+
+/* Smaller navbar logo */
+.nav-logo {
+  height: 56px; /* doubled from 28px per request */
+  width: auto;
+  display: block;
 }
 
 .cl-rootBox.cl-userButton-root {
@@ -666,31 +674,75 @@ tr.inactive {
   cursor: pointer;
 }
 
-.burger {
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text-color);
-  display: block; /* Show burger */
-  float: left;
-  padding-right: 2rem;
-  background: none;
-  border: none;
-}
-
+/* Navbar header links shown inline (left) */
 .nav-links {
-  display: none;
-  flex-direction: column;
-  gap: 1rem;
-  background: white;
-  position: absolute;
-  left: 20px;
-  top: 60px;
-  padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  gap: 1.25rem;
+  align-items: center;
+  margin-left: 2rem; /* start from left, right after brand — extra space requested */
+  background: none;
+  position: static;
+  top: auto;
+  left: auto;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .nav-links.show {
+  display: flex;
+}
+
+.nav-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 400; /* not bold per request */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+.nav-link:hover {
+  color: var(--secondary-color); /* Changes color to tomato on hover */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+/* Group dropdown styling for Maintenance */
+.nav-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-group-label {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-group-links {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: white;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem;
+  border-radius: 6px;
+  flex-direction: column;
+  min-width: 140px;
+  z-index: 200;
+}
+
+.nav-group-links .nav-link {
+  color: var(--text-color);
+  padding: 0.5rem 0.75rem;
+  display: block;
+}
+
+.nav-group:hover .nav-group-links {
   display: flex;
 }
 
@@ -698,6 +750,23 @@ tr.inactive {
 .nav-overlay {
   position: fixed;
   top: 80px; /* Position under navbar */
+
+  /* Logout button styling and right alignment */
+  .logout-btn {
+    margin-left: auto; /* push to the right in the navbar flex container */
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .logout-btn:hover {
+    background: var(--primary-color);
+    color: white;
+  }
   left: 0;
   width: 300px;
   height: calc(100vh - 80px); /* Full height minus navbar */
@@ -786,7 +855,7 @@ tr.inactive {
 .login-brand {
   font-size: 2rem;
   font-weight: bold;
-  color: #ffd600; /* yellow */
+  color: var(--secondary-color); /* yellow */
 }
 
 /* Card */
@@ -865,7 +934,7 @@ form {
 
 /* Yellow hero */
 .register-hero {
-  background: #ffd600; /* yellow */
+  background: var(--secondary-color); /* yellow */
   width: 100%;
   padding: 2rem;
   display: flex;
@@ -903,7 +972,7 @@ form {
 .register-btn {
   width: 100%;
   padding: 0.9rem;
-  background: #ffd600;
+  background: var(--secondary-color);
   color: #2e64c7;
   font-weight: bold;
   border: none;
